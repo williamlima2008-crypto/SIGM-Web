@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block titulo %}Dados da igreja - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+
+<main class="pagina-simples">
+  <div class="pagina-simples-miolo largo">
+    <h1>Dados da igreja</h1>
+    <p class="contador">Estes dados aparecem nos documentos oficiais e no cabeçalho do sistema. Campos com * são obrigatórios.</p>
+
+    <div class="abas igreja-abas" id="igreja-abas" role="tablist" aria-label="Seções dos dados da igreja">
+      {% for slug, nome, campos in abas %}
+      {% if slug == "sistema" %}<button type="button" role="tab" data-aba="visual" aria-selected="false">Identidade visual</button>{% endif %}
+      <button type="button" role="tab" data-aba="{{ slug }}" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ nome }}</button>
+      {% endfor %}
+    </div>
+
+    <form id="form-igreja" autocomplete="off" novalidate>
+      {% for slug, nome, campos in abas %}
+      {% if slug == "sistema" %}
+      <section class="igreja-painel" data-painel="visual" hidden>
+        <div class="imagens-igreja">
+          {% for tipo, rotulo in imagens %}
+          <div class="imagem-igreja" data-tipo="{{ tipo }}">
+            <h2>{{ rotulo }}</h2>
+            <div class="imagem-moldura"><img alt="{{ rotulo }}" hidden><span class="imagem-vazia">Nenhuma imagem</span></div>
+            <div class="barra-botoes">
+              <button type="button" class="btn btn-secundario btn-pequeno" data-acao="trocar">Escolher imagem</button>
+              <button type="button" class="btn btn-perigo btn-pequeno" data-acao="remover" hidden>Remover</button>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <p class="contador">PNG com fundo transparente fica melhor nos documentos. A imagem é salva assim que você a escolhe.</p>
+      </section>
+      {% endif %}
+      <section class="igreja-painel" data-painel="{{ slug }}"{% if not loop.first %} hidden{% endif %}>
+        <div class="igreja-grade">
+          {% for campo, rotulo in campos %}
+          <label>{{ rotulo }}{% if campo in obrigatorios %} *{% endif %}
+            <input type="text" name="{{ campo }}" maxlength="200"{% if campo in obrigatorios %} required{% endif %}{% if 'email' in campo %} inputmode="email" autocapitalize="none"{% endif %}>
+          </label>
+          {% endfor %}
+        </div>
+      </section>
+      {% endfor %}
+      <div class="barra-botoes igreja-rodape">
+        <button type="submit" class="btn btn-primario" id="btn-salvar-igreja">Salvar alterações</button>
+        <button type="button" class="btn btn-secundario" id="btn-descartar-igreja">Descartar</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<input type="file" id="arquivo-imagem" accept="image/png,image/jpeg,image/webp,image/bmp" hidden>
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+<script src="{{ url_for('static', filename='js/comum.js') }}"></script>
+<script src="{{ url_for('static', filename='js/igreja.js') }}"></script>
+{% endblock %}

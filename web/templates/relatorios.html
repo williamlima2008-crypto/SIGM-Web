@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titulo %}Relatórios - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+
+<main class="pagina-simples">
+  <div class="pagina-simples-miolo largo">
+    <h1>Relatórios</h1>
+    <div class="barra-filtros">
+      <label class="cresce">Relatório
+        <select id="tipo">
+          {% for slug, nome in tipos %}
+          <option value="{{ slug }}">{{ nome }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <div class="barra-botoes">
+        <button type="button" class="btn btn-primario" data-exportar="pdf">PDF</button>
+        <button type="button" class="btn btn-secundario" data-exportar="xlsx">Excel</button>
+        <button type="button" class="btn btn-secundario" data-exportar="csv">CSV</button>
+      </div>
+    </div>
+    <p class="contador" id="resumo" aria-live="polite"></p>
+    <div class="tabela-rolagem">
+      <table class="tabela-relatorio" id="tabela"></table>
+    </div>
+  </div>
+</main>
+
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+<script src="{{ url_for('static', filename='js/comum.js') }}"></script>
+<script src="{{ url_for('static', filename='js/relatorios.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titulo %}Auditoria - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+
+<main class="pagina-simples">
+  <div class="pagina-simples-miolo largo">
+    <div class="cabecalho-pagina">
+      <h1>Log de auditoria</h1>
+      <span class="acoes-cabecalho">
+        <button type="button" class="btn btn-secundario" id="btn-limpeza">Limpar antigos</button>
+        <button type="button" class="btn btn-primario" id="btn-pdf">Exportar PDF</button>
+      </span>
+    </div>
+    <form class="barra-filtros filtros-auditoria" id="filtros">
+      <label class="cresce">Pesquisar<input type="search" name="q" placeholder="Ação, usuário, descrição..."></label>
+      <label>Usuário<input type="text" name="usuario"></label>
+      <label>Módulo<input type="text" name="modulo"></label>
+      <label>Ação<input type="text" name="acao"></label>
+      <label>De<input type="text" name="de" placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10"></label>
+      <label>Até<input type="text" name="ate" placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10"></label>
+      <button type="button" class="btn btn-secundario" id="btn-limpar">Limpar</button>
+    </form>
+    <p class="contador" id="resumo" aria-live="polite"></p>
+    <div class="tabela-rolagem">
+      <table class="tabela-relatorio" id="tabela">
+        <thead><tr><th>Data e hora</th><th>Usuário</th><th>Ação</th><th>Módulo</th><th>Descrição</th></tr></thead>
+        <tbody id="corpo-tabela"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+<script src="{{ url_for('static', filename='js/comum.js') }}"></script>
+<script src="{{ url_for('static', filename='js/auditoria.js') }}"></script>
+{% endblock %}

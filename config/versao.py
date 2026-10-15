@@ -1,0 +1,7 @@
+NOME_SISTEMA = "SIGM"
+NOME_COMPLETO = "SIGM — Sistema de Gestão de Membros"
+DESCRICAO_SISTEMA = "Sistema de Gestão de Membros"
+VERSAO = "2.0.0"
+DESENVOLVEDOR = "William Lima"
+NOME_EXECUTAVEL = "SIGM.exe"
+NOME_INSTALADOR = "SIGM_Setup_2.0.0_Web.exe"

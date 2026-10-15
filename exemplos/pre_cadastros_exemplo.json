@@ -1,0 +1,50 @@
+{
+  "pre_cadastros": [
+    {
+      "remote_id": "exemplo-completo-001",
+      "nome_completo": "Pessoa Ficticia Completa",
+      "rg": "EX123456",
+      "orgao": "SSP",
+      "cpf": "00000000000",
+      "data_de_nascimento": "01/01/1990",
+      "cidade_natal": "Cidade Exemplo",
+      "uf_nascimento": "EX",
+      "estado_civil": "Solteiro",
+      "profissao": "Profissao Exemplo",
+      "nome_pai": "Pai Ficticio",
+      "nome_mae": "Mae Ficticia",
+      "grau_instrucao": "Superior",
+      "telefone": "0000000000",
+      "telefone_celular": "00000000000",
+      "e_mail": "pessoa.ficticia@example.invalid",
+      "endereco": "Rua Ficticia",
+      "numero": "123",
+      "bairro": "Bairro Exemplo",
+      "cidade": "Cidade Exemplo",
+      "estado": "EX",
+      "cep": "00000000",
+      "batismo_aguas": "02/02/2010",
+      "batismo_espirito_santo": "03/03/2011",
+      "ministerio": "Ministerio Exemplo",
+      "cargo": "Cooperador",
+      "data_funcao": "04/04/2020",
+      "curso_teologico": "Curso Exemplo",
+      "status_membro": "Membro",
+      "congregacao": "Congregacao Exemplo",
+      "dirigente": "Dirigente Ficticio",
+      "setor_campo": "Setor Exemplo",
+      "igreja_local_batismo_aguas": "Igreja Exemplo",
+      "igreja_local_batismo_espirito_santo": "Igreja Exemplo",
+      "recados_outros": "00000000000",
+      "nome_titular_lgpd": "Pessoa Ficticia Completa",
+      "observacoes": "Cadastro ficticio completo para teste."
+    },
+    {
+      "remote_id": "exemplo-parcial-001",
+      "nome_completo": "Pessoa Ficticia Parcial",
+      "telefone_celular": "00000000000",
+      "e_mail": "parcial@example.invalid",
+      "observacoes": "Cadastro ficticio parcial para teste."
+    }
+  ]
+}

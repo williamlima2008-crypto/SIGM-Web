@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titulo %}Aniversariantes - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+
+<main class="pagina-simples">
+  <div class="pagina-simples-miolo">
+    <h1>Aniversariantes</h1>
+    <div class="barra-filtros">
+      <label>Mês
+        <select id="mes">
+          {% for nome in meses %}
+          <option value="{{ loop.index }}"{% if loop.index == mes_atual %} selected{% endif %}>{{ nome }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="cresce">Pesquisar
+        <input type="search" id="busca" placeholder="Nome ou telefone">
+      </label>
+    </div>
+    <div class="resumos">
+      <div class="resumo"><strong id="n-hoje">0</strong><span>Aniversariantes de hoje</span></div>
+      <div class="resumo"><strong id="n-mes">0</strong><span id="rotulo-mes">Aniversariantes do mês</span></div>
+    </div>
+    <ul class="cartoes" id="lista" aria-live="polite"></ul>
+  </div>
+</main>
+
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+<script src="{{ url_for('static', filename='js/comum.js') }}"></script>
+<script src="{{ url_for('static', filename='js/aniversariantes.js') }}"></script>
+{% endblock %}

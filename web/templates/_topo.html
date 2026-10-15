@@ -1,0 +1,16 @@
+<header class="topo">
+  <div class="topo-id">
+    {% if igreja.logo %}<img class="topo-logo" src="{{ igreja.logo }}" alt="" onerror="this.remove()">{% endif %}
+    <strong class="topo-marca">{{ sistema }}</strong>
+    <span class="topo-igreja">{{ igreja.nome }}</span>
+  </div>
+  <nav class="topo-menu" aria-label="Seções do sistema">
+    {% for item in menu %}
+    <a href="{{ item.url }}"{% if item.ativo %} aria-current="page"{% endif %}>{{ item.nome }}</a>
+    {% endfor %}
+  </nav>
+  <div class="topo-usuario">
+    <span>{{ usuario.nome }}</span>
+    <button type="button" class="btn btn-fantasma" id="btn-sair">Sair</button>
+  </div>
+</header>

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block titulo %}Documentos - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+
+<main class="pagina-simples">
+  <div class="pagina-simples-miolo">
+    <h1>Central de documentos</h1>
+    <p class="contador">Todos os documentos emitidos pelo SIGM. Para emitir um novo, abra a ficha do membro.</p>
+    <div class="resumos">
+      <div class="resumo"><strong id="n-total">0</strong><span>Documentos emitidos</span></div>
+    </div>
+    <div class="barra-filtros">
+      <label class="cresce">Pesquisar
+        <input type="search" id="busca" placeholder="Documento, membro ou usuário">
+      </label>
+    </div>
+    <p class="contador" id="resumo" aria-live="polite"></p>
+    <ul class="cartoes" id="lista" aria-live="polite"></ul>
+  </div>
+</main>
+
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+<script src="{{ url_for('static', filename='js/comum.js') }}"></script>
+<script src="{{ url_for('static', filename='js/central_documentos.js') }}"></script>
+{% endblock %}

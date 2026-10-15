@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block titulo %}Pré-cadastros - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+
+<div class="app" id="app">
+  <section class="painel-lista" aria-label="Lista de pré-cadastros">
+    <div class="lista-cabecalho">
+      <h1>Pré-cadastros</h1>
+      <div class="lista-acoes">
+        <button type="button" class="btn btn-primario" id="btn-sincronizar">Sincronizar</button>
+        <label class="btn btn-secundario" for="arquivo-json">Importar JSON</label>
+        <input type="file" id="arquivo-json" accept=".json,application/json" hidden>
+      </div>
+    </div>
+
+    <div class="filtros">
+      <input type="search" id="busca" placeholder="Buscar por nome, CPF, celular ou e-mail" aria-label="Buscar pré-cadastros">
+      <div class="abas" id="abas" role="tablist" aria-label="Filtrar por situação">
+        <button type="button" role="tab" data-status="" aria-selected="true">Todos <span class="n" data-n="todos"></span></button>
+        <button type="button" role="tab" data-status="pendente" aria-selected="false">Pendentes <span class="n" data-n="pendente"></span></button>
+        <button type="button" role="tab" data-status="aprovado" aria-selected="false">Aprovados <span class="n" data-n="aprovado"></span></button>
+        <button type="button" role="tab" data-status="rejeitado" aria-selected="false">Rejeitados <span class="n" data-n="rejeitado"></span></button>
+        <button type="button" role="tab" data-status="duplicado" aria-selected="false">Duplicados <span class="n" data-n="duplicado"></span></button>
+      </div>
+    </div>
+
+    <p class="limpeza-lote" id="limpeza-lote" hidden>
+      <button type="button" class="btn btn-perigo btn-pequeno" id="btn-excluir-lote"></button>
+    </p>
+    <ul class="lista" id="lista" aria-live="polite"></ul>
+  </section>
+
+  <section class="painel-detalhe" id="detalhe" aria-label="Detalhes do pré-cadastro">
+    <div class="vazio" id="detalhe-vazio">
+      <p>Escolha um pré-cadastro na lista para revisar os dados, aprovar ou atualizar um cadastro que já existe.</p>
+    </div>
+    <div id="detalhe-conteudo" hidden></div>
+  </section>
+</div>
+
+<dialog id="dialogo">
+  <form method="dialog" id="dialogo-form">
+    <h2 id="dialogo-titulo"></h2>
+    <p id="dialogo-texto"></p>
+    <label id="dialogo-campo" hidden>
+      <span id="dialogo-rotulo"></span>
+      <input type="text" id="dialogo-entrada" maxlength="180">
+    </label>
+    <div class="dialogo-botoes">
+      <button type="button" class="btn btn-secundario" id="dialogo-cancelar">Cancelar</button>
+      <button type="submit" class="btn btn-primario" id="dialogo-ok">Confirmar</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+
+<script>
+  window.SIGM = {
+    rotulos: {{ rotulos | tojson }},
+    secoes: {{ secoes | tojson }}
+  };
+</script>
+<script src="{{ url_for('static', filename='js/pre_cadastros.js') }}"></script>
+{% endblock %}

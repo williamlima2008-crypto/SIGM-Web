@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block titulo %}Usuários - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+
+<main class="pagina-simples">
+  <div class="pagina-simples-miolo">
+    <div class="cabecalho-pagina">
+      <h1>Usuários</h1>
+      <div class="barra-botoes">
+        <button type="button" class="btn btn-secundario" id="btn-chave">Chave de recuperação</button>
+        <button type="button" class="btn btn-primario" id="btn-novo-usuario">Novo usuário</button>
+      </div>
+    </div>
+    <p class="contador" id="resumo-chave"></p>
+    <ul class="cartoes" id="lista" aria-live="polite"></ul>
+  </div>
+</main>
+
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+<script>window.SIGM_USUARIOS = { perfis: {{ perfis|tojson }}, senhaMinima: {{ senha_minima }} };</script>
+<script src="{{ url_for('static', filename='js/comum.js') }}"></script>
+<script src="{{ url_for('static', filename='js/usuarios.js') }}"></script>
+{% endblock %}

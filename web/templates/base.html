@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0B5ED7">
+  <title>{% block titulo %}SIGM{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/sigm.css') }}">
+</head>
+<body class="{% block classe %}{% endblock %}">
+{% block corpo %}{% endblock %}
+<script src="{{ url_for('static', filename='js/ping.js') }}"></script>
+</body>
+</html>

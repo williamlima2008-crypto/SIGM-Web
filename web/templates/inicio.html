@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titulo %}Início - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+
+<main class="pagina-simples">
+  <div class="pagina-simples-miolo largo">
+    <h1>{{ saudacao }}, {{ usuario.nome }}!</h1>
+    <p class="contador">Painel geral do sistema · {{ hoje }}</p>
+
+    <div class="resumos resumos-painel" id="indicadores">
+      <a class="resumo" href="/membros"><strong data-ind="total">–</strong><span>Total de membros</span></a>
+      <a class="resumo" href="/membros"><strong data-ind="membros">–</strong><span>Membros</span></a>
+      <a class="resumo" href="/membros"><strong data-ind="visitantes">–</strong><span>Visitantes</span></a>
+      <a class="resumo" href="/membros"><strong data-ind="congregados">–</strong><span>Congregados</span></a>
+      <a class="resumo" href="/documentos"><strong data-ind="pdfs">–</strong><span>PDFs emitidos</span></a>
+      <a class="resumo" href="/pre-cadastros"><strong data-ind="pre_cadastros_pendentes">–</strong><span>Pré-cadastros pendentes</span></a>
+    </div>
+
+    <div class="painel-blocos">
+      <section class="bloco-painel"><h2>Últimos membros</h2><ul class="lista-simples" id="b-membros"></ul></section>
+      <section class="bloco-painel"><h2>Próximos aniversários</h2><ul class="lista-simples" id="b-aniversarios"></ul></section>
+      <section class="bloco-painel"><h2>Atividades recentes</h2><ul class="lista-simples" id="b-atividades"></ul></section>
+      <section class="bloco-painel"><h2>Último backup</h2><ul class="lista-simples" id="b-backup"></ul></section>
+    </div>
+  </div>
+</main>
+
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+<script src="{{ url_for('static', filename='js/comum.js') }}"></script>
+<script src="{{ url_for('static', filename='js/inicio.js') }}"></script>
+{% endblock %}

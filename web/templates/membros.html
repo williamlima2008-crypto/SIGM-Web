@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block titulo %}Membros - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+
+<div class="app" id="app">
+  <section class="painel-lista" aria-label="Lista de membros">
+    <div class="lista-cabecalho">
+      <h1>Membros</h1>
+      <div class="lista-acoes">
+        <button type="button" class="btn btn-primario" id="btn-novo">Novo membro</button>
+      </div>
+    </div>
+
+    <div class="filtros">
+      <input type="search" id="busca" placeholder="Buscar por nome, CPF, celular, e-mail ou cidade" aria-label="Buscar membros">
+      <div class="abas" id="abas" role="tablist" aria-label="Filtrar por status"></div>
+      <p class="contador" id="contador" aria-live="polite"></p>
+    </div>
+
+    <ul class="lista" id="lista" aria-live="polite"></ul>
+  </section>
+
+  <section class="painel-detalhe" id="detalhe" aria-label="Ficha do membro">
+    <div class="vazio" id="detalhe-vazio">
+      <p>Escolha um membro na lista para ver a ficha, trocar a foto ou editar os dados. Para cadastrar alguém, use <strong>Novo membro</strong>.</p>
+    </div>
+    <div id="detalhe-conteudo" hidden></div>
+  </section>
+</div>
+
+<input type="file" id="arquivo-foto" accept="image/jpeg,image/png,image/webp,image/bmp" hidden>
+
+<dialog id="dialogo">
+  <form method="dialog" id="dialogo-form">
+    <h2 id="dialogo-titulo"></h2>
+    <p id="dialogo-texto"></p>
+    <label id="dialogo-campo" hidden>
+      <span id="dialogo-rotulo"></span>
+      <input type="text" id="dialogo-entrada" maxlength="180">
+    </label>
+    <div class="dialogo-botoes">
+      <button type="button" class="btn btn-secundario" id="dialogo-cancelar">Cancelar</button>
+      <button type="submit" class="btn btn-primario" id="dialogo-ok">Confirmar</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+
+<script>
+  window.SIGM = {
+    rotulos: {{ rotulos | tojson }},
+    secoes: {{ secoes | tojson }},
+    camposData: {{ campos_data | tojson }},
+    funcoes: {{ funcoes | tojson }},
+    statusPadrao: {{ status_padrao | tojson }}
+  };
+</script>
+<script src="{{ url_for('static', filename='js/membros.js') }}"></script>
+{% endblock %}

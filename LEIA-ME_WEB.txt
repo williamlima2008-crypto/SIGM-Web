@@ -1,0 +1,64 @@
+SIGM WEB - Membros e Pre-cadastros
+
+Instalar (uma vez):
+    pip install flask
+
+Abrir no computador:
+    python iniciar_web.py
+
+Abrir tambem para o celular (mesmo Wi-Fi):
+    python iniciar_web.py --rede
+    -> o terminal mostra o endereco, ex.: http://192.168.0.10:8765/
+    -> digite esse endereco no navegador do celular.
+    -> se o Windows perguntar sobre o firewall, permita em "Rede privada".
+
+O login e o mesmo do SIGM (usuarios do sigm.db).
+
+Telas:
+    Membros        - lista com busca e filtro por status, ficha completa,
+                     edicao, novo membro e foto (adicionar, trocar, remover).
+    Pre-cadastros  - revisar, aprovar, atualizar cadastro existente.
+    Aniversariantes- por mes, com busca; o nome abre a ficha.
+    Relatorios     - 7 tipos, exporta PDF, Excel ou CSV.
+    Documentos     - na ficha do membro: Ficha Cadastral, Membramento,
+                     Reconciliacao e Carta de Recomendacao (PDF), com
+                     historico dos emitidos.
+
+IMPORTANTE: os documentos usam os geradores, modelos e mapeamentos do
+desktop. Mantenha estas pastas iguais as do SIGM_RECUPERADO:
+    documentos, telas\documentos, componentes, utils, servicos, config, assets
+e o banco\database.py.
+
+IMPORTANTE: copie tambem o banco\database.py atualizado do desktop
+(o mesmo da versao sem secretarios) para esta pasta.
+
+Testes:
+    python -m unittest tests.test_web_membros
+
+
+DADOS DA IGREJA (menu "Dados da igreja")
+- Abas: Identificação, Liderança, Contatos, Congregação Local, Endereço, Identidade visual (logotipo, carimbo, assinatura do pastor) e Sistema.
+- Usa a mesma tabela do desktop: o que for salvo aqui aparece no desktop e nos documentos, e vice-versa.
+- A logo aparece no topo e na tela de login. Imagens ficam em imagens_igreja\ na pasta de dados.
+- Alterações entram no Log de Auditoria, como no desktop.
+
+
+TELAS NOVAS (menu do topo)
+- Início: painel com indicadores, últimos membros, próximos aniversários, atividades e último backup.
+- Documentos: central com todos os documentos emitidos (busca, abrir PDF, ir para a ficha).
+- Ficha do membro > Arquivos anexados: anexar PDF/PNG/JPG, renomear, abrir e excluir (mesma pasta e tabela do desktop).
+- Pré-cadastro online: status da integração, link do formulário, QR Code e chave de sincronização.
+  Ativar/testar a integração e ver a chave são só do Administrador.
+- Backup: criar backup ZIP (todos); baixar e restaurar (só Administrador). Restaurar guarda antes um backup do estado atual.
+- Usuários e Auditoria (só Administrador): criar/editar/bloquear/excluir usuários, redefinir senha, chave de recuperação, log com filtros e PDF.
+  Senhas criadas pela web têm no mínimo 6 caracteres. Não é possível bloquear/excluir o próprio usuário nem o último Administrador.
+
+Pasta SIGM_WEB: confira que servicos\, utils\ e banco\database.py estão iguais aos do SIGM_RECUPERADO
+(a configuração online usa servicos\identidade_online_igreja.py, servicos\cliente_sigm_online.py,
+servicos\recuperacao_senha.py e utils\qrcode_igreja.py). O QR Code precisa do pacote qrcode[pil] (o mesmo do desktop).
+
+ACESSO
+- Primeiro acesso pela web: se não houver usuários, a tela de login pede os dados da igreja e do Administrador e mostra a chave de recuperação (uma vez).
+- "Esqueci minha senha" no login: redefine a senha com a chave de recuperação (bloqueia por 5 minutos após 5 erros).
+- Sobre: versão e dados do sistema.
+Não incluído na web: editor visual de documentos (arrastar campos no PDF) e o botão CELULAR de sincronização com o SIGM Celular; ficam no desktop.

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block titulo %}Pré-cadastro online - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+
+<main class="pagina-simples">
+  <div class="pagina-simples-miolo">
+    <h1>Pré-cadastro online</h1>
+    <p class="contador">Formulário público para os visitantes se cadastrarem pelo celular. Os envios chegam em <a href="/pre-cadastros">Pré-cadastros</a>.</p>
+
+    <section class="bloco-painel online-bloco">
+      <h2>Situação</h2>
+      <p class="online-estado"><span class="selo" id="estado">–</span> <span class="item-sub" id="sincronizacao"></span></p>
+      <dl class="dados">
+        <div class="dado largo"><dt>Servidor</dt><dd id="servidor">–</dd></div>
+        <div class="dado largo"><dt>Identificador público</dt><dd id="identificador">–</dd></div>
+        <div class="dado largo"><dt>Chave de sincronização</dt><dd id="chave">–</dd></div>
+      </dl>
+      <div class="barra-botoes" id="acoes-admin" hidden>
+        <button type="button" class="btn btn-primario" id="btn-ativar">Ativar integração</button>
+        <button type="button" class="btn btn-secundario" id="btn-testar">Testar conexão</button>
+        <button type="button" class="btn btn-secundario" id="btn-chave">Mostrar / copiar chave</button>
+      </div>
+      <p class="item-sub" id="aviso-admin" hidden>Apenas o Administrador pode ativar ou testar a integração.</p>
+    </section>
+
+    <section class="bloco-painel online-bloco">
+      <h2>Link e QR Code</h2>
+      <dl class="dados"><div class="dado largo"><dt>Link do formulário</dt><dd id="link">–</dd></div></dl>
+      <div class="barra-botoes">
+        <button type="button" class="btn btn-secundario" id="btn-copiar-link" disabled>Copiar link</button>
+        <button type="button" class="btn btn-primario" id="btn-qr" disabled>Gerar QR Code</button>
+        <a class="btn btn-secundario" id="btn-baixar-qr" href="/api/online/qrcode.png?baixar=1" hidden>Baixar QR Code</a>
+      </div>
+      <div class="qr-moldura"><img id="qr" alt="QR Code do formulário de pré-cadastro" hidden><span class="item-sub" id="qr-vazio">QR Code ainda não gerado.</span></div>
+    </section>
+  </div>
+</main>
+
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+<script src="{{ url_for('static', filename='js/comum.js') }}"></script>
+<script src="{{ url_for('static', filename='js/online.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block titulo %}Sobre - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+<main class="pagina-simples">
+  <div class="pagina-simples-miolo">
+    <h1>Sobre o SIGM</h1>
+    <section class="bloco-painel online-bloco">
+      <h2>{{ nome_completo }}</h2>
+      <dl class="dados">
+        <div class="dado largo"><dt>Versão</dt><dd>{{ versao }}</dd></div>
+        <div class="dado largo"><dt>Descrição</dt><dd>Sistema para gestão de membros, documentos e arquivos da igreja.</dd></div>
+        <div class="dado largo"><dt>Desenvolvedor</dt><dd>{{ desenvolvedor }}</dd></div>
+        {% if nome_igreja %}<div class="dado largo"><dt>Igreja</dt><dd>{{ nome_igreja }}{% if local %} · {{ local }}{% endif %}</dd></div>{% endif %}
+      </dl>
+      <p class="item-sub">Licenciado para uso da igreja configurada.</p>
+    </section>
+  </div>
+</main>
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+<script src="{{ url_for('static', filename='js/comum.js') }}"></script>
+{% endblock %}

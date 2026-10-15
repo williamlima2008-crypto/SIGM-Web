@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block titulo %}Backup - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+
+<main class="pagina-simples">
+  <div class="pagina-simples-miolo">
+    <div class="cabecalho-pagina">
+      <h1>Backup</h1>
+      <button type="button" class="btn btn-primario" id="btn-criar">Criar backup agora</button>
+    </div>
+    <section class="bloco-painel">
+      <h2>O que entra no backup</h2>
+      <ul class="lista-simples">
+        {% for item in itens %}<li>{{ item }}</li>{% endfor %}
+      </ul>
+    </section>
+    <h2 class="subtitulo-pagina">Backups guardados</h2>
+    <p class="contador" id="resumo"></p>
+    <ul class="cartoes" id="lista" aria-live="polite"></ul>
+  </div>
+</main>
+
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+<script src="{{ url_for('static', filename='js/comum.js') }}"></script>
+<script src="{{ url_for('static', filename='js/backup.js') }}"></script>
+{% endblock %}

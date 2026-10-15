@@ -1,0 +1,8 @@
+customtkinter
+Pillow
+PyMuPDF
+pypdf
+qrcode[pil]
+reportlab
+requests
+flask
