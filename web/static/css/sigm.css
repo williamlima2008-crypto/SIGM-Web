@@ -455,3 +455,11 @@ a.btn-primario { color: #fff; }
 .chave-recuperacao { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 22px; font-weight: 700; letter-spacing: 1px; text-align: center; padding: 14px; margin: 14px 0; background: var(--papel); border: 1px dashed var(--azul); border-radius: var(--raio); user-select: all; overflow-wrap: anywhere; }
 .acoes-cabecalho { display: flex; gap: 8px; flex-wrap: wrap; }
 .limpeza-lote { margin: 0; padding: 8px 16px; border-bottom: 1px solid var(--borda, #e1e5ea); }
+
+/* ---------- Celular (sincronizacao) ---------- */
+.celular-resultado { margin: 12px 0 0; font-weight: 600; color: var(--verde); }
+.celular-erro { color: var(--vermelho); font-weight: 600; }
+.celular-cartao { margin-top: 14px; padding: 14px 16px; border: 1px solid var(--linha); border-radius: 10px; background: #fff; }
+.celular-cartao h3 { margin: 0 0 8px; font-size: 16px; }
+.celular-campo { margin: 4px 0; font-size: 14px; }
+.celular-aviso { color: var(--ambar); }

@@ -64,6 +64,7 @@ from web.acesso import registrar_rotas_acesso
 from web.arquivos_membro import registrar_rotas_arquivos_membro
 from web.backup_web import registrar_rotas_backup
 from web.central_documentos import registrar_rotas_central_documentos
+from web.celular import registrar_rotas_celular
 from web.configuracao_online import registrar_rotas_configuracao_online
 from web.igreja import registrar_rotas_igreja, versao_imagem
 from web.membros import registrar_rotas_membros
@@ -251,6 +252,7 @@ def criar_app():
             {"nome": "Relatórios", "url": "/relatorios", "ativo": ativo == "relatorios"},
             {"nome": "Dados da igreja", "url": "/igreja", "ativo": ativo == "igreja"},
             {"nome": "Pré-cadastro online", "url": "/online", "ativo": ativo == "online"},
+            {"nome": "Celular", "url": "/celular", "ativo": ativo == "celular"},
             {"nome": "Backup", "url": "/backup", "ativo": ativo == "backup"},
             {"nome": "Sobre", "url": "/sobre", "ativo": ativo == "sobre"},
         ]
@@ -617,6 +619,7 @@ def criar_app():
     registrar_rotas_auditoria(app, exige_login, exige_admin, dados_igreja, menu_usuario)
     registrar_rotas_backup(app, exige_login, exige_admin, dados_igreja, menu_usuario)
     registrar_rotas_configuracao_online(app, exige_login, exige_admin, dados_igreja, menu_usuario)
+    registrar_rotas_celular(app, exige_login, dados_igreja, menu_usuario)
     registrar_rotas_central_documentos(app, exige_login, dados_igreja, menu_usuario)
     registrar_rotas_painel(app, exige_login, dados_igreja, menu_usuario)
     registrar_rotas_igreja(app, exige_login, dados_igreja, menu_usuario)

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block titulo %}Celular - SIGM{% endblock %}
+{% block classe %}pagina-app{% endblock %}
+{% block corpo %}
+{% include "_topo.html" %}
+
+<main class="pagina-simples">
+  <div class="pagina-simples-miolo">
+    <h1>Celular</h1>
+    <p class="contador">Envie os membros do SIGM para o painel do Celular (consulta, aniversariantes, relatórios e PDFs) e trate as alterações que a equipe sugerir por lá. O computador da igreja continua sendo a fonte dos dados.</p>
+
+    <section class="bloco-painel online-bloco">
+      <h2>Situação</h2>
+      <p class="online-estado"><span class="selo" id="estado">–</span></p>
+      <p class="item-sub" id="aviso-inativo" hidden>Para sincronizar, primeiro ative a integração em <a href="/online">Pré-cadastro online</a>.</p>
+    </section>
+
+    <section class="bloco-painel online-bloco">
+      <h2>Enviar dados ao Celular</h2>
+      <p class="item-sub">Envia só o que mudou: membros novos ou alterados, fotos, dados da igreja e o logotipo. Quem foi apagado aqui também sai do Celular.</p>
+      <div class="barra-botoes">
+        <button type="button" class="btn btn-primario" id="btn-enviar" disabled>Enviar dados ao Celular</button>
+      </div>
+      <p class="item-sub" id="progresso" role="status" aria-live="polite" hidden></p>
+      <p class="celular-resultado" id="resultado" role="status" hidden></p>
+    </section>
+
+    <section class="bloco-painel online-bloco">
+      <h2>Alterações sugeridas pelo Celular</h2>
+      <p class="item-sub">Pessoas autorizadas no Celular podem sugerir correções em um cadastro. Confira cada uma e aplique ou rejeite; a resposta volta para o Celular.</p>
+      <div class="barra-botoes">
+        <button type="button" class="btn btn-secundario" id="btn-buscar" disabled>Buscar alterações</button>
+      </div>
+      <div id="lista-alteracoes"><p class="item-sub" id="vazio">Nenhuma busca feita ainda.</p></div>
+    </section>
+  </div>
+</main>
+
+<div class="aviso-flutuante" id="aviso" role="status" aria-live="polite" hidden></div>
+<script src="{{ url_for('static', filename='js/comum.js') }}"></script>
+<script src="{{ url_for('static', filename='js/celular.js') }}"></script>
+{% endblock %}

@@ -47,5 +47,5 @@ if not defined ISCC (
 if errorlevel 1 (echo Falha no Inno Setup. & exit /b 1)
 
 echo.
-echo Pronto: instalador\output\SIGM_Setup_2.0.0_Web.exe
+echo Pronto: instalador\output\SIGM_Setup_2.1.0_Web.exe
 endlocal
