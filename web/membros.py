@@ -27,7 +27,7 @@ from banco.database import (
     garantir_tabela_documentos_emitidos,
 )
 from config import configuracoes
-from documentos.datas import separar_data_documento
+from documentos.datas import CAMPOS_DATA_BR, normalizar_campo_data, separar_data_documento
 from documentos.integrador_documentos import (
     EXTENSOES_FOTO_MEMBRO,
     PASTA_FOTOS_MEMBROS,
@@ -158,6 +158,9 @@ def membro_para_dict(id_membro):
     dados["id"] = int(linha[0])
     dados["data_funcao"] = str(buscar_data_funcao_membro(id_membro) or "")
     dados["cargo"] = normalizar_funcao(dados.get("cargo"))
+    for campo in CAMPOS_DATA_BR:
+        if campo in dados:
+            dados[campo] = normalizar_campo_data(campo, dados[campo])
     return dados
 
 
@@ -172,6 +175,9 @@ def validar_e_normalizar(dados):
             return None, f"{rotulo} inválida. Use DD/MM/AAAA."
     if dados["cep"] and len(_digitos(dados["cep"])) != 8:
         return None, "CEP inválido. Use 00000-000."
+    for campo in CAMPOS_DATA_BR:
+        if campo in dados:
+            dados[campo] = normalizar_campo_data(campo, dados[campo])
     dados["cpf"] = formatar_cpf(dados["cpf"])
     dados["rg"] = formatar_rg(dados["rg"])
     dados["cep"] = formatar_cep(dados["cep"])

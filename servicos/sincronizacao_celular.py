@@ -32,6 +32,7 @@ from servicos.cliente_sigm_online import (
     SIGMOnlineErro,
     SIGMOnlineRespostaErro,
 )
+from documentos.datas import CAMPOS_DATA_BR, normalizar_campo_data
 from utils.auditoria import registrar_acao
 from utils.formatadores import formatar_cpf, formatar_rg
 
@@ -160,6 +161,9 @@ def listar_membros_locais():
             origem = coluna_funcao if (campo == "data_funcao" and coluna_funcao) else campo
             if origem in registro:
                 dados[campo] = _texto(registro[origem])
+        for campo in CAMPOS_DATA_BR:  # o Celular recebe datas como DD/MM/AAAA e Sim/Nao
+            if campo in dados:
+                dados[campo] = normalizar_campo_data(campo, dados[campo])
         if "cpf" in dados:
             dados["cpf"] = formatar_cpf(dados["cpf"])
         if "rg" in dados:

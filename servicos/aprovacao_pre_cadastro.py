@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from documentos.datas import CAMPOS_DATA_BR, normalizar_campo_data
 from banco.database import (
     conectar,
     data_hora_atual,
@@ -127,6 +128,11 @@ def preparar_dados_membro(pre_cadastro):
     }
     dados["cpf"] = formatar_cpf(dados.get("cpf"))
     dados["rg"] = formatar_rg(dados.get("rg"))
+    for campo in CAMPOS_DATA_BR:
+        if campo in dados:
+            bruto = (pre_cadastro or {}).get(campo)
+            # False vira "" no str(... or ""): trata antes para nao perder o "Nao".
+            dados[campo] = normalizar_campo_data(campo, bruto if bruto is False else dados[campo])
     dados["status"] = str((pre_cadastro or {}).get("status_membro") or "").strip()
     if not dados["status"]:
         dados["status"] = STATUS_MEMBRO_PADRAO
