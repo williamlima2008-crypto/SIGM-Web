@@ -22,7 +22,7 @@ from servicos.recuperacao_senha import (
 from utils.auditoria import registrar_acao
 
 PERFIS = [("Administrador", "Administrador"), ("Usuario", "Usuário")]
-SENHA_MINIMA = 6
+SENHA_MINIMA = 8
 
 
 def _perfil_valido(perfil):

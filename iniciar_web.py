@@ -92,6 +92,8 @@ def main():
     if args.rede:
         print(f"SIGM Web no celular: http://{ip_da_rede()}:{args.porta}/")
         print("O celular precisa estar no mesmo Wi-Fi. Feche esta janela para encerrar.")
+        print("ATENCAO: neste modo a conexao NAO e criptografada (HTTP). Use somente em")
+        print("rede de confianca (Wi-Fi da igreja protegido por senha), nunca em rede publica.")
     else:
         print(f"SIGM Web em {url_local}")
 

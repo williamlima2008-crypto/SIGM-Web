@@ -1,7 +1,5 @@
 """Primeiro acesso, recuperacao de senha por chave e tela Sobre (versao web)."""
 
-import time
-
 from flask import jsonify, render_template, request, session
 
 from banco.database import (
@@ -14,25 +12,19 @@ from config import configuracoes
 from config.versao import DESENVOLVEDOR, NOME_COMPLETO, VERSAO
 from servicos.recuperacao_senha import gerar_chave_recuperacao, redefinir_senha_com_chave
 from utils.auditoria import registrar_acao
+from web import limite_tentativas
 
-SENHA_MINIMA = 6
+SENHA_MINIMA = 8
 LIMITE_TENTATIVAS = 5
 JANELA_SEGUNDOS = 300
 
 
 def registrar_rotas_acesso(app, exige_login, dados_igreja, menu_usuario):
-    falhas = {}
-
     def _bloqueado(ip):
-        total, ultimo = falhas.get(ip, (0, 0.0))
-        if time.time() - ultimo > JANELA_SEGUNDOS:
-            falhas.pop(ip, None)
-            return False
-        return total >= LIMITE_TENTATIVAS
+        return limite_tentativas.bloqueado("recuperar", ip, LIMITE_TENTATIVAS, JANELA_SEGUNDOS)
 
     def _falhou(ip):
-        total, _ = falhas.get(ip, (0, 0.0))
-        falhas[ip] = (total + 1, time.time())
+        limite_tentativas.falhou("recuperar", ip, JANELA_SEGUNDOS)
 
     @app.post("/api/primeiro-acesso")
     def api_primeiro_acesso():
@@ -83,7 +75,7 @@ def registrar_rotas_acesso(app, exige_login, dados_igreja, menu_usuario):
                            f"Tentativa de recuperacao de senha recusada para o usuario {usuario}.",
                            modulo="Autenticacao", usuario_login=usuario)
             return jsonify(ok=False, mensagem=mensagem), 400
-        falhas.pop(ip, None)
+        limite_tentativas.limpar("recuperar", ip)
         registrar_acao("SENHA_REDEFINIDA_POR_CHAVE",
                        f"Senha do usuario {dados['usuario']} redefinida pela chave de recuperacao.",
                        modulo="Autenticacao", registro_id=dados["id"],

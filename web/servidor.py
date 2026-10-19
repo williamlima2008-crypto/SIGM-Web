@@ -5,8 +5,10 @@ Camada HTML/CSS do SIGM. Nao reimplementa regra de negocio: chama as
 mesmas funcoes de banco/ e servicos/ usadas pela versao desktop.
 """
 
+import ipaddress
 import os
 import secrets
+import socket
 import tempfile
 import threading
 import time
@@ -66,6 +68,7 @@ from web.backup_web import registrar_rotas_backup
 from web.central_documentos import registrar_rotas_central_documentos
 from web.celular import registrar_rotas_celular
 from web.configuracao_online import registrar_rotas_configuracao_online
+from web import limite_tentativas
 from web.igreja import registrar_rotas_igreja, versao_imagem
 from web.membros import registrar_rotas_membros
 from web.painel import registrar_rotas_painel
@@ -153,6 +156,28 @@ def _chave_secreta():
     return chave
 
 
+def host_permitido(host):
+    """So aceita IP, localhost e o nome deste computador (barra DNS rebinding)."""
+    host = str(host or "").strip().lower()
+    if host.startswith("["):
+        nome = host[1:].split("]")[0]
+    else:
+        nome = host.rsplit(":", 1)[0] if host.count(":") == 1 else host
+    try:
+        ipaddress.ip_address(nome)
+        return True
+    except ValueError:
+        pass
+    try:
+        meu_nome = socket.gethostname().lower()
+    except OSError:
+        meu_nome = ""
+    permitidos = {"localhost"}
+    if meu_nome:
+        permitidos |= {meu_nome, meu_nome + ".local"}
+    return nome in permitidos
+
+
 def criar_app():
     app = Flask(
         __name__,
@@ -165,11 +190,12 @@ def criar_app():
         SESSION_COOKIE_SAMESITE="Strict",
         MAX_CONTENT_LENGTH=15 * 1024 * 1024,
     )
-    tentativas = {}
 
     # ------------------------------------------------------------ infra
     @app.before_request
     def _antes():
+        if not host_permitido(request.host):
+            abort(400)
         _trava_requisicao.acquire()
         usuario = session.get("usuario")
         if usuario:
@@ -290,9 +316,8 @@ def criar_app():
         dados = request.get_json(silent=True) or {}
         usuario = str(dados.get("usuario") or "").strip()
         senha = str(dados.get("senha") or "").strip()
-        chave = (request.remote_addr, usuario.lower())
-        registro = tentativas.get(chave, (0, 0.0))
-        if registro[0] >= 5 and time.time() - registro[1] < 60:
+        chave = f"{request.remote_addr}|{usuario.lower()}"
+        if limite_tentativas.bloqueado("login", chave, 5, 60):
             return jsonify(erro="Muitas tentativas. Aguarde 1 minuto."), 429
         if not usuario or not senha:
             return jsonify(erro="Informe usuário e senha."), 400
@@ -301,10 +326,10 @@ def criar_app():
         if resultado and resultado.get("bloqueado"):
             return jsonify(erro="Este usuário está bloqueado."), 403
         if not resultado:
-            tentativas[chave] = (registro[0] + 1, time.time())
+            limite_tentativas.falhou("login", chave, 60)
             return jsonify(erro="Usuário ou senha incorretos."), 401
 
-        tentativas.pop(chave, None)
+        limite_tentativas.limpar("login", chave)
         session.clear()
         session["usuario"] = {
             "id_usuario": resultado.get("id_usuario"),

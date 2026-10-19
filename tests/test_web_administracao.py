@@ -72,14 +72,14 @@ class TesteAcesso(Base):
 
 class TesteUsuarios(Base):
     def test_criar_validar_e_duplicado(self):
-        r = self.c.post("/api/usuarios", headers=H, json={"nome": "Novo", "usuario": "novo", "senha": "abcdef", "perfil": "Usuario"})
+        r = self.c.post("/api/usuarios", headers=H, json={"nome": "Novo", "usuario": "novo", "senha": "abcdef12", "perfil": "Usuario"})
         self.assertTrue(r.get_json()["ok"], r.get_json())
-        self.assertIsNotNone(db.validar_login("novo", "abcdef"))
-        casos = [({"nome": "", "usuario": "a", "senha": "abcdef", "perfil": "Usuario"}, "nome"),
-                 ({"nome": "A", "usuario": "a b", "senha": "abcdef", "perfil": "Usuario"}, "espaços"),
+        self.assertIsNotNone(db.validar_login("novo", "abcdef12"))
+        casos = [({"nome": "", "usuario": "a", "senha": "abcdef12", "perfil": "Usuario"}, "nome"),
+                 ({"nome": "A", "usuario": "a b", "senha": "abcdef12", "perfil": "Usuario"}, "espaços"),
                  ({"nome": "A", "usuario": "a", "senha": "123", "perfil": "Usuario"}, "senha"),
-                 ({"nome": "A", "usuario": "a", "senha": "abcdef", "perfil": "Root"}, "Perfil"),
-                 ({"nome": "A", "usuario": "novo", "senha": "abcdef", "perfil": "Usuario"}, "Já existe")]
+                 ({"nome": "A", "usuario": "a", "senha": "abcdef12", "perfil": "Root"}, "Perfil"),
+                 ({"nome": "A", "usuario": "novo", "senha": "abcdef12", "perfil": "Usuario"}, "Já existe")]
         for dados, trecho in casos:
             r = self.c.post("/api/usuarios", headers=H, json=dados)
             self.assertEqual(r.status_code, 400, dados)
@@ -129,7 +129,7 @@ class TesteUsuarios(Base):
         self.assertNotIn(r["chave"], self.c.get("/api/usuarios").data.decode())
 
     def test_acoes_vao_para_a_auditoria(self):
-        self.c.post("/api/usuarios", headers=H, json={"nome": "N", "usuario": "n", "senha": "abcdef", "perfil": "Usuario"})
+        self.c.post("/api/usuarios", headers=H, json={"nome": "N", "usuario": "n", "senha": "abcdef12", "perfil": "Usuario"})
         acoes = [l["acao"] for l in db.listar_logs_auditoria()]
         self.assertIn("USUARIO_CRIADO", acoes)
 
@@ -198,12 +198,12 @@ class TesteBackup(Base):
 
     def test_restaurar_volta_o_banco_e_guarda_seguranca(self):
         nome = self.c.post("/api/backup", headers=H, json={}).get_json()["nome"]
-        db.cadastrar_usuario("Depois", "depois", "abcdef", "Usuario")
-        self.assertIsNotNone(db.validar_login("depois", "abcdef"))
+        db.cadastrar_usuario("Depois", "depois", "abcdef12", "Usuario")
+        self.assertIsNotNone(db.validar_login("depois", "abcdef12"))
         self.assertEqual(self.c.post(f"/api/backup/{nome}/restaurar", headers=H, json={}).status_code, 400)
         r = self.c.post(f"/api/backup/{nome}/restaurar", headers=H, json={"confirmar": True}).get_json()
         self.assertTrue(r["ok"], r)
-        self.assertIsNone(db.validar_login("depois", "abcdef"))
+        self.assertIsNone(db.validar_login("depois", "abcdef12"))
         self.assertIn(r["seguranca"], [i["nome"] for i in self.c.get("/api/backup").get_json()["itens"]])
 
     def test_backup_invalido_e_recusado(self):
