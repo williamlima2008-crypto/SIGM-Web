@@ -253,11 +253,20 @@ def enviar_dados_para_celular(cliente=None, progresso=None):
     """Envia o que mudou. Devolve um resumo para mostrar ao usuario."""
     aviso = progresso or (lambda _texto: None)
     cliente = cliente or criar_cliente()
-    resumo = {"total": 0, "enviados": 0, "criados": 0, "atualizados": 0, "removidos": 0, "erros": 0}
+    resumo = {
+        "total": 0, "enviados": 0, "criados": 0, "atualizados": 0, "removidos": 0, "erros": 0,
+        "recebidos": 0, "conflitos": 0,
+    }
 
     aviso("Conferindo a conexao com o Celular...")
     cliente.validar_igreja()
     registrar_acao("SINCRONIZACAO_CELULAR_INICIADA", "Envio de dados ao Celular iniciado.", modulo="Celular")
+
+    # Primeiro traz o que foi editado no Celular; so depois envia, para nao sobrescrever essas edicoes.
+    aviso("Recebendo as alteracoes feitas no Celular...")
+    recebido = receber_alteracoes_do_celular(cliente)
+    resumo["recebidos"] = recebido["membros"]
+    resumo["conflitos"] = recebido["conflitos"]
 
     aviso("Enviando os dados da igreja...")
     logotipo = logotipo_em_base64()
@@ -303,8 +312,15 @@ def enviar_dados_para_celular(cliente=None, progresso=None):
 
 
 def texto_resumo(resumo):
+    recebidos = int(resumo.get("recebidos") or 0)
+    conflitos = int(resumo.get("conflitos") or 0)
+    extra = ""
+    if recebidos:
+        extra += f" {recebidos} membro(s) atualizado(s) com edicoes feitas no Celular."
+    if conflitos:
+        extra += f" {conflitos} campo(s) alterado(s) nos dois lados: valeu o do desktop."
     if resumo["enviados"] == 0 and resumo["removidos"] == 0:
-        return f"O Celular ja esta atualizado ({resumo['total']} membros)."
+        return f"O Celular ja esta atualizado ({resumo['total']} membros)." + extra
     partes = [f"{resumo['enviados']} enviado(s)"]
     if resumo["criados"]:
         partes.append(f"{resumo['criados']} novo(s)")
@@ -314,7 +330,7 @@ def texto_resumo(resumo):
         partes.append(f"{resumo['removidos']} removido(s) do Celular")
     if resumo["erros"]:
         partes.append(f"{resumo['erros']} com erro")
-    return "Envio concluido: " + ", ".join(partes) + "."
+    return "Envio concluido: " + ", ".join(partes) + "." + extra
 
 
 # ------------------------------------------------- sugestoes do Celular
@@ -323,6 +339,79 @@ def buscar_alteracoes(cliente=None):
     cliente.validar_igreja()
     alteracoes = cliente.listar_alteracoes()
     return [dict(a, situacao=situacao_atual(a)) for a in alteracoes]
+
+
+def _mesmo_valor(campo, a, b):
+    a, b = _texto(a), _texto(b)
+    if campo == "cpf":
+        a, b = formatar_cpf(a), formatar_cpf(b)
+    elif campo == "rg":
+        a, b = formatar_rg(a), formatar_rg(b)
+    return " ".join(a.split()) == " ".join(b.split())
+
+
+def classificar_alteracao(alteracao, atual):
+    """Separa os campos da edicao do Celular.
+
+    Devolve (aplicar, conflitos): `aplicar` = {campo: {"depois": ...}} dos campos que
+    ainda estao como estavam quando o Celular editou; `conflitos` = lista de campos que
+    mudaram nos dois lados (nesses vale o do desktop).
+    """
+    aplicar, conflitos = {}, []
+    for campo, mudanca in (alteracao.get("campos") or {}).items():
+        if campo not in CAMPOS_MEMBRO or not isinstance(mudanca, dict):
+            continue
+        antes, depois = mudanca.get("antes"), mudanca.get("depois")
+        valor_atual = atual.get(campo, "")
+        if _mesmo_valor(campo, valor_atual, depois):
+            continue  # ja esta igual
+        if _mesmo_valor(campo, valor_atual, antes):
+            aplicar[campo] = {"depois": _texto(depois)}
+        else:
+            conflitos.append(campo)
+    return aplicar, conflitos
+
+
+def receber_alteracoes_do_celular(cliente=None):
+    """Aplica sozinho as edicoes feitas no Celular e avisa o resultado.
+
+    Regra: campo que so o Celular mudou -> o desktop recebe o valor novo. Campo que
+    os dois lados mudaram de forma diferente -> vale o do desktop (e o Celular
+    recebe esse valor no envio logo em seguida). Devolve {"membros", "campos", "conflitos"}.
+    """
+    cliente = cliente or criar_cliente()
+    resumo = {"membros": 0, "campos": 0, "conflitos": 0}
+    resultados = []
+    for alteracao in cliente.listar_alteracoes():
+        try:
+            atual = _membro_local(int(alteracao.get("id_desktop")))
+        except (TypeError, ValueError):
+            atual = None
+        if atual is None:
+            resultados.append({"id": alteracao.get("id"), "status": "rejeitada",
+                               "motivo": "Membro nao existe mais no desktop"})
+            continue
+        aplicar, conflitos = classificar_alteracao(alteracao, atual)
+        if aplicar:
+            quantidade = aplicar_alteracao(dict(alteracao, campos=aplicar))
+            resumo["membros"] += 1
+            resumo["campos"] += quantidade
+        resumo["conflitos"] += len(conflitos)
+        motivo = ""
+        if conflitos:
+            motivo = ("Alterado nos dois lados (" + ", ".join(conflitos) + "): valeu o do desktop")[:180]
+            registrar_acao(
+                "ALTERACAO_DO_CELULAR_CONFLITO", "Campo alterado no desktop e no Celular: valeu o do desktop.",
+                modulo="Celular", registro_id=alteracao.get("id_desktop"), detalhes="campos=" + ", ".join(conflitos),
+            )
+        resultados.append({
+            "id": alteracao.get("id"),
+            "status": "aplicada" if (aplicar or not conflitos) else "rejeitada",
+            "motivo": motivo,
+        })
+    if resultados:
+        cliente.enviar_resultados(resultados)
+    return resumo
 
 
 def _membro_local(id_membro):

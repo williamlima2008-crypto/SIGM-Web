@@ -178,6 +178,40 @@ class TesteCelular(unittest.TestCase):
         self.assertEqual(r.status_code, 404)
         self.assertEqual(self.cliente.resultados, [])
 
+    def test_envio_traz_primeiro_as_edicoes_do_celular(self):
+        id_ana = self.membro("Ana Lima", cidade="Osasco", bairro="Centro")
+        self.cliente.alteracoes = [self.alteracao(
+            id_ana, cidade={"antes": "Osasco", "depois": "Guarulhos"})]
+        self.c.post("/api/celular/enviar", json={}, headers=H)
+        estado = self.esperar_fim()
+        self.assertEqual(estado["erro"], "")
+        self.assertEqual(self.c.get(f"/api/membros/{id_ana}").get_json()["campos"]["cidade"], "Guarulhos")
+        self.assertEqual(self.cliente.resultados, [{"id": 7, "status": "aplicada", "motivo": ""}])
+        enviado = next(i for i in self.cliente.membros_enviados if i["id_desktop"] == id_ana)
+        self.assertEqual(enviado["dados"]["cidade"], "Guarulhos")  # ja sai com o valor novo
+        self.assertIn("edicoes feitas no Celular", estado["resumo_texto"])
+
+    def test_campo_alterado_nos_dois_lados_vale_o_do_desktop(self):
+        id_ana = self.membro("Ana Lima", cidade="Osasco", bairro="Centro")
+        self.cliente.alteracoes = [self.alteracao(
+            id_ana,
+            cidade={"antes": "Barueri", "depois": "Guarulhos"},   # desktop mudou para Osasco depois
+            bairro={"antes": "Centro", "depois": "Vila Nova"},    # so o celular mudou
+        )]
+        self.c.post("/api/celular/enviar", json={}, headers=H)
+        estado = self.esperar_fim()
+        campos = self.c.get(f"/api/membros/{id_ana}").get_json()["campos"]
+        self.assertEqual((campos["cidade"], campos["bairro"]), ("Osasco", "Vila Nova"))
+        self.assertEqual(self.cliente.resultados[0]["status"], "aplicada")
+        self.assertIn("cidade", self.cliente.resultados[0]["motivo"])
+        self.assertIn("valeu o do desktop", estado["resumo_texto"])
+
+    def test_edicao_de_membro_apagado_no_desktop_e_rejeitada(self):
+        self.cliente.alteracoes = [self.alteracao(9999)]
+        self.c.post("/api/celular/enviar", json={}, headers=H)
+        self.esperar_fim()
+        self.assertEqual(self.cliente.resultados[0]["status"], "rejeitada")
+
 
 if __name__ == "__main__":
     unittest.main()

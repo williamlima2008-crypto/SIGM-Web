@@ -172,11 +172,11 @@ def buscar_foto_membro_por_arquivo(id_membro):
         if not arquivo.is_file():
             continue
 
-        nome = arquivo.name.lower()
         if arquivo.suffix.lower() not in EXTENSOES_FOTO_MEMBRO:
             continue
 
-        if any(nome.startswith(prefixo.lower()) for prefixo in prefixos):
+        # Nome exato (sem a extensao): "foto_1" nao pode casar com "foto_12".
+        if arquivo.stem.lower() in {p.lower() for p in prefixos}:
             return str(arquivo.resolve())
 
     return ""

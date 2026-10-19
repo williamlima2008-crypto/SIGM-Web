@@ -28,7 +28,7 @@ window.SIGMComum = (function () {
     } catch (e) {
       throw new Error("Não foi possível falar com o SIGM. Confira se ele está aberto.");
     }
-    if (resposta.status === 401) { window.location.href = "/login"; throw new Error("Sessão expirada."); }
+    if (resposta.status === 401) { (window.sigmPermitirSaida && window.sigmPermitirSaida(), window.location.href = "/login"); throw new Error("Sessão expirada."); }
     const dados = await resposta.json().catch(() => ({}));
     return { ok: resposta.ok, status: resposta.status, dados };
   }
@@ -48,7 +48,7 @@ window.SIGMComum = (function () {
     const ok = await confirmar({ titulo: "Sair do SIGM", texto: "Deseja encerrar a sua sessão?", botao: "Sair" });
     if (!ok) return;
     await api("/api/logout", { method: "POST", json: {} });
-    window.location.href = "/login";
+    (window.sigmPermitirSaida && window.sigmPermitirSaida(), window.location.href = "/login");
   });
 
   /* Diálogos criados na hora (não exigem marcação na página). */
