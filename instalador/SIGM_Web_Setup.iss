@@ -1,8 +1,8 @@
 #define MyAppName "SIGM — Sistema de Gestão de Membros"
-#define MyAppVersion "2.1.3"
+#define MyAppVersion "2.1.4"
 #define MyAppPublisher "William Lima"
 #define MyAppExeName "SIGM.exe"
-#define MySetupName "SIGM_Setup_2.1.3_Web"
+#define MySetupName "SIGM_Setup_2.1.4_Web"
 
 [Setup]
 AppId={{A5C32D13-59B0-4B2C-9C5B-3F2C5E8C3D10}

@@ -4,17 +4,17 @@ e carta de recomendacao).
 
 Nao reimplementa o desenho dos PDFs: usa os mesmos geradores, modelos e
 mapeamentos da versao desktop (documentos/gerar_documentos.py,
-documentos/renderizador_pdf.py e telas/documentos/editor_*.py). A diferenca
+documentos/renderizador_pdf.py e documentos/editores_dados.py). A diferenca
 e que aqui o PDF nao e aberto numa janela do computador: ele e registrado no
 historico e enviado ao navegador.
 """
 
-import importlib
 import re
 from dataclasses import replace
 from datetime import date, datetime
 from pathlib import Path
 
+from documentos import editores_dados
 from utils.caminhos import caminho_dados
 
 TIPO_FICHA = "ficha-cadastral"
@@ -97,12 +97,10 @@ def limpar_nome_arquivo(valor):
 
 
 def _editor(slug):
-    """Modulo do editor desktop (so para ler constantes e dados iniciais)."""
-    nome = {
-        TIPO_MEMBRAMENTO: "telas.documentos.editor_membramento",
-        TIPO_RECONCILIACAO: "telas.documentos.editor_reconciliacao",
-    }[slug]
-    return importlib.import_module(nome)
+    """Constantes e dados iniciais dos pedidos (sem depender das telas do desktop)."""
+    if slug not in (TIPO_MEMBRAMENTO, TIPO_RECONCILIACAO):
+        raise KeyError(slug)
+    return editores_dados
 
 
 def _classe_editor(slug):
